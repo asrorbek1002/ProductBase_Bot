@@ -13,6 +13,9 @@ admin_keyboard_list = [
     ],
     [
         InlineKeyboardButton(text="🗒 Adminlar yo'yxati", callback_data="admin_list")
+    ],
+    [
+        InlineKeyboardButton(text="⬇️ Bazani yuklash", callback_data='download_db')
     ]
 ]
 Admin_keyboard = InlineKeyboardMarkup(admin_keyboard_list)

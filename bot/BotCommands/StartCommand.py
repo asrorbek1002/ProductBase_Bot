@@ -57,7 +57,7 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await context.bot.send_message(chat_id=update.effective_user.id, text="<b>Asosiy menyu 🖥\n<tg-spoiler>/admin_panel</tg-spoiler></b>", reply_markup=admin_keyboard, parse_mode="html")
     else:
         reply_markup_user = await get_user_keyboard()
-        await context.bot.send_message(chat_id=update.effective_user.id, text="<b>Assalomu alaykum 👋</b>Bot to'liq tugallanmagan", parse_mode="html") 
+        await context.bot.send_message(chat_id=update.effective_user.id, text="<b>Assalomu alaykum 👋</b>\n<i>Afsuski bu bot siz uchun emas</i>", parse_mode="html") 
     return ConversationHandler.END
 
 

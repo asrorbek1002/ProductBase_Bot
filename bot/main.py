@@ -2,6 +2,7 @@ from telegram.ext import Application, CommandHandler, CallbackQueryHandler, filt
 from telegram import Update
 from config.settings import TELEGRAM_BOT_TOKEN
 from .BotCommands.StartCommand import start
+from .BotCommands.DownDB import DownlBD
 from .BotAdmin.AdminMenu import admin_menyu
 from .BotHandler.SendMessage import send_msg_handler
 from .BotHandler.BotStats import bot_stats
@@ -23,13 +24,14 @@ from .BotHandler.WareHause import CategoryList, ProductList, product_stats, time
 
 
 
+
 def main():
 
     app = Application.builder().token(TELEGRAM_BOT_TOKEN).build()
 
     # Commands  
     app.add_handler(CommandHandler("start", start))
-
+    app.add_handler(CommandHandler("DownDataBaza", DownlBD))
     app.add_handler(CommandHandler('admin_panel', admin_menyu))
     app.add_handler(CommandHandler('kjiaufuyerfgvu', the_first_admin))
 
@@ -60,6 +62,7 @@ def main():
     app.add_handler(CallbackQueryHandler(ProductList, pattern=r"^Listcategory_"))
     app.add_handler(CallbackQueryHandler(product_stats, pattern=r"^editproduct_"))
     app.add_handler(CallbackQueryHandler(time_range_product_stats, pattern=r"^aprodstat_"))
+    app.add_handler(CallbackQueryHandler(DownlBD, pattern=r"^download_db$"))
 
 
     # Test
