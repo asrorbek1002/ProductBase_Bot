@@ -76,9 +76,6 @@ def main():
     app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, quantity_received))
 
 
-    # Test
-    app.add_handler(CallbackQueryHandler(testInlinehandler))
-
     # Bot start
     print("The bot is running!!!")
     app.run_polling()
