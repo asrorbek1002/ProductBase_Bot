@@ -47,6 +47,7 @@ async def testInlinehandler(update: Update, context: ContextTypes.DEFAULT_TYPE):
     """
     Botni ishga tushirish uchun komanda.
     """
+    print(update.callback_query.data)
     data = update.effective_user
     if update.callback_query:
         await update.callback_query.answer("Asosiy menyu")

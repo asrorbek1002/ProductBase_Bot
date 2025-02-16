@@ -114,7 +114,7 @@ async def cancel_remove(update: Update, context: CallbackContext) -> int:
 
 # ConversationHandler ni sozlash
 remove_admin_handler = ConversationHandler(
-    entry_points=[CallbackQueryHandler(start_remove_admin, pattern=r'^delete_admin$', )],
+    entry_points=[CallbackQueryHandler(start_remove_admin, pattern=r'^delete_admin$')],
     states={
         SELECT_ADMIN: [CallbackQueryHandler(select_admin, pattern="^remove_admin_")],
         CONFIRM_REMOVE: [

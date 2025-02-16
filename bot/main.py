@@ -1,4 +1,4 @@
-from telegram.ext import Application, CommandHandler, CallbackQueryHandler, filters, ContextTypes
+from telegram.ext import Application, CommandHandler, CallbackQueryHandler, filters, ConversationHandler, MessageHandler
 from telegram import Update
 from config.settings import TELEGRAM_BOT_TOKEN
 from .BotCommands.StartCommand import start
@@ -13,7 +13,7 @@ from .BotHandler.TestHandler import testInlinehandler
 from .BotHandler.AddProduct import add_product_handler
 from .BotHandler.AddCategroy import add_category_handler
 from .BotHandler.DeleteProduct import delete_product_handler
-from .BotHandler.PlusProduct import plus_product_handler
+from .BotHandler.PlusProduct import category_selected, product_selected, plus_product, quantity_received
 from .BotHandler.MinusProduct import minus_product_handler
 from .BotHandler.MarketStats import Market_stats
 from .BotHandler.InputOutput import transaction_stats, time_range_stats
@@ -36,14 +36,20 @@ def main():
     app.add_handler(CommandHandler('kjiaufuyerfgvu', the_first_admin))
 
     # Conversation handlers
+    app.add_handler(minus_product_handler)
     app.add_handler(send_msg_handler)
     app.add_handler(add_admin_handler)
     app.add_handler(remove_admin_handler)
     app.add_handler(add_product_handler)
     app.add_handler(add_category_handler)
     app.add_handler(delete_product_handler)
-    app.add_handler(plus_product_handler)
-    app.add_handler(minus_product_handler)
+    app.add_handler(ConversationHandler(
+        entry_points=[CallbackQueryHandler(product_selected, pattern=r"^qbazepilusproduct_\d+$")], 
+        states={
+            "QUANTITY_SELECT": [MessageHandler(filters.TEXT & ~filters.COMMAND, quantity_received)]
+        },
+        fallbacks=[CommandHandler('start', start)]
+    ))
 
     # Inline hanlder
     app.add_handler(CallbackQueryHandler(start, pattern=r"^Main_Menu$"))
@@ -63,6 +69,11 @@ def main():
     app.add_handler(CallbackQueryHandler(product_stats, pattern=r"^editproduct_"))
     app.add_handler(CallbackQueryHandler(time_range_product_stats, pattern=r"^aprodstat_"))
     app.add_handler(CallbackQueryHandler(DownlBD, pattern=r"^download_db$"))
+    app.add_handler(CallbackQueryHandler(category_selected, pattern=r"^xbazepiluscategory_\d+$"))
+    app.add_handler(CallbackQueryHandler(plus_product, pattern=r"^PILUS_PRODUCT$"))
+
+    # MessageHandler
+    app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, quantity_received))
 
 
     # Test

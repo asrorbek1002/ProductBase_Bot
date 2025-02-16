@@ -15,7 +15,7 @@ async def plus_product(update: Update, context):
     row = []
     
     for i, cat in enumerate(categories, start=1):
-        row.append(InlineKeyboardButton(f"{cat.name} ({await sync_to_async(Product.objects.filter(category=cat).count)()})", callback_data=f"category_{cat.id}"))
+        row.append(InlineKeyboardButton(f"{cat.name} ({await sync_to_async(Product.objects.filter(category=cat).count)()})", callback_data=f"xbazepiluscategory_{cat.id}"))
         if i % 2 == 0:
             keyboard.append(row)
             row = []
@@ -26,7 +26,6 @@ async def plus_product(update: Update, context):
     
     reply_markup = InlineKeyboardMarkup(keyboard)
     await update.callback_query.edit_message_text("Kategoriyani tanlang:", reply_markup=reply_markup)
-    return CATEGORY_SELECT
 
 async def category_selected(update: Update, context):
     query = update.callback_query
@@ -39,7 +38,7 @@ async def category_selected(update: Update, context):
     
     for i, prod in enumerate(products, start=1):
         quantity = await sync_to_async(lambda: Warehouse.objects.filter(product=prod).values_list("quantity", flat=True).first() or 0)()
-        row.append(InlineKeyboardButton(f"{prod.name} ({quantity})", callback_data=f"product_{prod.id}"))
+        row.append(InlineKeyboardButton(f"{prod.name} ({quantity})", callback_data=f"qbazepilusproduct_{prod.id}"))
         if i % 4 == 0:
             keyboard.append(row)
             row = []
@@ -50,7 +49,6 @@ async def category_selected(update: Update, context):
     
     reply_markup = InlineKeyboardMarkup(keyboard)
     await query.edit_message_text("Mahsulotni tanlang:", reply_markup=reply_markup)
-    return PRODUCT_SELECT
 
 async def product_selected(update: Update, context):
     query = update.callback_query
@@ -61,7 +59,7 @@ async def product_selected(update: Update, context):
     reply_markup = InlineKeyboardMarkup(back_main_menu_buttons())
     await query.edit_message_text("Nechta qo'shmoqchisiz? (son kiriting)", reply_markup=reply_markup)
     
-    return QUANTITY_SELECT
+    return "QUANTITY_SELECT"
 
 async def quantity_received(update: Update, context):
     quantity = int(update.message.text)
@@ -85,13 +83,5 @@ async def cancel(update: Update, context):
     await update.message.reply_text("Bekor qilindi.")
     return ConversationHandler.END
 
-plus_product_handler = ConversationHandler(
-    entry_points=[CallbackQueryHandler(plus_product, pattern=r"^PILUS_PRODUCT$")],
-    states={
-        CATEGORY_SELECT: [CallbackQueryHandler(category_selected, pattern=r"^category_\d+$")],
-        PRODUCT_SELECT: [CallbackQueryHandler(product_selected, pattern=r"^product_\d+$")],
-        QUANTITY_SELECT: [MessageHandler(filters.TEXT & ~filters.COMMAND, quantity_received)],
-    },
-    fallbacks=[CommandHandler("cancel", cancel)]
-)
+
 
