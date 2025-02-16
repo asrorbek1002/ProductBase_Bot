@@ -9,7 +9,6 @@ from bot.utils import save_transaction_async
 
 
 # Conversation states
-NAME, PURCHASE_PRICE, SELLING_PRICE, UNIT, CATEGORY, QUANTITY = range(6)
 
 # Unit choices
 UNIT_CHOICES = [
@@ -34,7 +33,7 @@ async def start_add_product(update: Update, context: ContextTypes.DEFAULT_TYPE):
     reply_markup = InlineKeyboardMarkup(keyboard + back_main_menu_buttons())
     
     await update.callback_query.edit_message_text("Kategoriya tanlang:", reply_markup=reply_markup)
-    return CATEGORY
+    return "CATEGORY"
 
 async def product_category(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query = update.callback_query
@@ -44,10 +43,10 @@ async def product_category(update: Update, context: ContextTypes.DEFAULT_TYPE):
         context.user_data['category'] = category
     except ObjectDoesNotExist:
         await query.message.reply_text("Kategoriyani topib bo'lmadi. Qayta urinib ko'ring.")
-        return CATEGORY
+        return "CATEGORY"
     
     await query.message.reply_text("Mahsulot nomini kiriting:", reply_markup=InlineKeyboardMarkup(back_main_menu_buttons()))
-    return NAME
+    return "NAME"
 
 async def product_name(update: Update, context: ContextTypes.DEFAULT_TYPE):
     context.user_data['name'] = update.message.text
@@ -56,7 +55,7 @@ async def product_name(update: Update, context: ContextTypes.DEFAULT_TYPE):
     reply_markup = InlineKeyboardMarkup(keyboard + back_main_menu_buttons())
     
     await context.bot.send_message(chat_id=update.effective_user.id, text="Mahsulot o‘lchov birligini tanlang:", reply_markup=reply_markup)
-    return UNIT
+    return "UNIT"
 
 async def product_unit(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query = update.callback_query
@@ -64,34 +63,34 @@ async def product_unit(update: Update, context: ContextTypes.DEFAULT_TYPE):
     context.user_data['unit'] = query.data
     
     await query.message.reply_text("Mahsulot miqdorini kiriting:", reply_markup=InlineKeyboardMarkup(back_main_menu_buttons()))
-    return QUANTITY
+    return "QUANTITY"
 
 async def product_quantity(update: Update, context: ContextTypes.DEFAULT_TYPE):
     try:
         context.user_data['quantity'] = int(update.message.text)
     except ValueError:
         await update.message.reply_text("Iltimos, miqdorni to'g'ri kiriting:")
-        return QUANTITY
+        return "QUANTITY"
     
     await update.message.reply_text("Mahsulot sotib olingan narxini kiriting:", reply_markup=InlineKeyboardMarkup(back_main_menu_buttons()))
-    return PURCHASE_PRICE
+    return "PURCHASE_PRICE"
 
 async def product_purchase_price(update: Update, context: ContextTypes.DEFAULT_TYPE):
     try:
         context.user_data['purchase_price'] = float(update.message.text)
     except ValueError:
         await update.message.reply_text("Iltimos, to'g'ri narx kiriting:")
-        return PURCHASE_PRICE
+        return "PURCHASE_PRICE"
     
     await update.message.reply_text("Mahsulot sotish narxini kiriting:", reply_markup=InlineKeyboardMarkup(back_main_menu_buttons()))
-    return SELLING_PRICE
+    return "SELLING_PRICE"
 
 async def product_selling_price(update: Update, context: ContextTypes.DEFAULT_TYPE):
     try:
         context.user_data['selling_price'] = float(update.message.text)
     except ValueError:
         await update.message.reply_text("Iltimos, to'g'ri narx kiriting:")
-        return SELLING_PRICE
+        return "SELLING_PRICE"
     
     product = Product(
         name=context.user_data['name'],
@@ -152,12 +151,12 @@ async def main_menu_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
 add_product_handler = ConversationHandler(
     entry_points=[CallbackQueryHandler(start_add_product, pattern=r"^add_product_to_base$")],
     states={
-        NAME: [MessageHandler(filters.TEXT & ~filters.COMMAND, product_name)],
-        PURCHASE_PRICE: [MessageHandler(filters.TEXT & ~filters.COMMAND, product_purchase_price)],
-        QUANTITY: [MessageHandler(filters.TEXT & ~filters.COMMAND, product_quantity)],
-        SELLING_PRICE: [MessageHandler(filters.TEXT & ~filters.COMMAND, product_selling_price)],
-        UNIT: [CallbackQueryHandler(product_unit)],
-        CATEGORY: [CallbackQueryHandler(product_category)],
+        "NAME": [MessageHandler(filters.TEXT & ~filters.COMMAND, product_name)],
+        "PURCHASE_PRICE": [MessageHandler(filters.TEXT & ~filters.COMMAND, product_purchase_price)],
+        "QUANTITY": [MessageHandler(filters.TEXT & ~filters.COMMAND, product_quantity)],
+        "SELLING_PRICE": [MessageHandler(filters.TEXT & ~filters.COMMAND, product_selling_price)],
+        "UNIT": [CallbackQueryHandler(product_unit)],
+        "CATEGORY": [CallbackQueryHandler(product_category)],
     },
     fallbacks=[CallbackQueryHandler(main_menu_handler, pattern="^main_menu$")]
 )

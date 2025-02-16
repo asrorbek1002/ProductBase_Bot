@@ -6,7 +6,6 @@ from bot.models import Category, Product
 from django.core.exceptions import ObjectDoesNotExist
 
 # States
-SELECT_CATEGORY, SELECT_PRODUCT, CONFIRM_DELETE = range(3)
 
 from asgiref.sync import sync_to_async
 from django.db.models import Count
@@ -31,7 +30,7 @@ async def delete_product_start(update: Update, context: CallbackContext):
 
     reply_markup = InlineKeyboardMarkup(keyboard)
     await update.callback_query.edit_message_text("Mahsulot turini tanlang:", reply_markup=reply_markup)
-    return SELECT_CATEGORY
+    return "SELECT_CATEGORY"
 
 
 async def select_category(update: Update, context: CallbackContext):
@@ -59,7 +58,7 @@ async def select_category(update: Update, context: CallbackContext):
     
     reply_markup = InlineKeyboardMarkup(keyboard)
     await query.message.reply_text(f"{category.name} dagi mahsulotlar:", reply_markup=reply_markup)
-    return SELECT_PRODUCT
+    return "SELECT_PRODUCT"
 
 async def confirm_delete(update: Update, context: CallbackContext):
     """Ask for confirmation before deleting the product."""
@@ -76,7 +75,7 @@ async def confirm_delete(update: Update, context: CallbackContext):
     ]
     reply_markup = InlineKeyboardMarkup(keyboard)
     await query.message.reply_text(f"{product.name} mahsulotini o‘chirishni tasdiqlaysizmi?", reply_markup=reply_markup)
-    return CONFIRM_DELETE
+    return "CONFIRM_DELETE"
 
 async def delete_product(update: Update, context: CallbackContext):
     """Delete the selected product."""
@@ -102,9 +101,9 @@ async def cancel_delete(update: Update, context: CallbackContext):
 delete_product_handler = ConversationHandler(
     entry_points=[CallbackQueryHandler(delete_product_start, pattern=r"^delete_product_to_base$")],
     states={
-        SELECT_CATEGORY: [CallbackQueryHandler(select_category, pattern=r"^delete_cat_\d+$")],
-        SELECT_PRODUCT: [CallbackQueryHandler(confirm_delete, pattern=r"^delete_prod_\d+$")],
-        CONFIRM_DELETE: [
+        "SELECT_CATEGORY": [CallbackQueryHandler(select_category, pattern=r"^delete_cat_\d+$")],
+        "SELECT_PRODUCT": [CallbackQueryHandler(confirm_delete, pattern=r"^delete_prod_\d+$")],
+        "CONFIRM_DELETE": [
             CallbackQueryHandler(delete_product, pattern=r"^confirm_delete$")],
     },
     fallbacks=[CallbackQueryHandler(cancel_delete, pattern=r"^cancel_delete$")],

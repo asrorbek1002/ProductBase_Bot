@@ -4,7 +4,6 @@ from asgiref.sync import sync_to_async
 from django.db import transaction
 from bot.models import Product, Warehouse, Transaction, Category
 
-CATEGORY_SELECT, PRODUCT_SELECT, QUANTITY_SELECT = range(3)
 
 def back_main_menu_buttons():
     return [[InlineKeyboardButton("\u274c Bekor qilish", callback_data="main_menu")]]
@@ -25,7 +24,7 @@ async def minus_product(update: Update, context):
     keyboard += back_main_menu_buttons()
     reply_markup = InlineKeyboardMarkup(keyboard)
     await update.callback_query.edit_message_text("Kategoriyani tanlang:", reply_markup=reply_markup)
-    return CATEGORY_SELECT
+    return "MCATEGORY_SELECT"
 
 async def category_selected(update: Update, context):
     query = update.callback_query
@@ -48,7 +47,7 @@ async def category_selected(update: Update, context):
     keyboard += back_main_menu_buttons()
     reply_markup = InlineKeyboardMarkup(keyboard)
     await query.edit_message_text("Mahsulotni tanlang:", reply_markup=reply_markup)
-    return PRODUCT_SELECT
+    return "MPRODUCT_SELECT"
 
 async def product_selected(update: Update, context):
     query = update.callback_query
@@ -57,7 +56,7 @@ async def product_selected(update: Update, context):
     context.user_data['product_id'] = product_id
     reply_markup = InlineKeyboardMarkup(back_main_menu_buttons())
     await query.edit_message_text("Nechta kamaytirmoqchisiz? (son kiriting)", reply_markup=reply_markup)
-    return QUANTITY_SELECT
+    return "MQUANTITY_SELECT"
 
 async def quantity_decrease(update: Update, context):
     try:
@@ -104,9 +103,9 @@ async def cancel(update: Update, context):
 minus_product_handler = ConversationHandler(
     entry_points=[CallbackQueryHandler(minus_product, pattern=r"^MINUS_PRODUCT$")],
     states={
-        CATEGORY_SELECT: [CallbackQueryHandler(category_selected, pattern=r"^category_\d+$")],
-        PRODUCT_SELECT: [CallbackQueryHandler(product_selected, pattern=r"^minusproduct_\d+$")],
-        QUANTITY_SELECT: [MessageHandler(filters.TEXT & ~filters.COMMAND, quantity_decrease)],
+        "MCATEGORY_SELECT": [CallbackQueryHandler(category_selected, pattern=r"^category_\d+$")],
+        "MPRODUCT_SELECT": [CallbackQueryHandler(product_selected, pattern=r"^minusproduct_\d+$")],
+        "MQUANTITY_SELECT": [MessageHandler(filters.TEXT & ~filters.COMMAND, quantity_decrease)],
     },
     fallbacks=[CommandHandler("cancel", cancel)]
 )
