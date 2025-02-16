@@ -23,9 +23,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-a@l&o0k8enc*iy3z0xe%9%9q)r*6@-t0xmj57q(zgy3mxe$uwu'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['127.0.0.1', 'localhost', '94.198.218.103']
 
 
 # Application definition
@@ -124,4 +124,4 @@ STATIC_URL = 'static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
-TELEGRAM_BOT_TOKEN = "7924426675:AAHHfz9G7k1kM_Eouw15_v9bqSWmwkZZDYk"
+TELEGRAM_BOT_TOKEN = "7697250053:AAEHvB3POK16vHy7O3iMYjcEzqFNQ_aTUE8"
