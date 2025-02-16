@@ -16,6 +16,7 @@ UNIT_CHOICES = [
     ('dona', 'Dona'),
     ('litr', 'Litr'),
     ('kg', 'Kilogram'),
+    ('m', 'Metr'),
     ('block', 'Block'),
 ]
 
